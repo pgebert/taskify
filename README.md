@@ -1,5 +1,7 @@
 # Taskify
 
+![screenshot](https://user-images.githubusercontent.com/6838540/52152771-ebc48780-2677-11e9-855f-b62acda376ac.png)
+
 Taskify is a ToDo list demo application build with java and vaadin. The web application covers the following features:
 
 - ToDo List
