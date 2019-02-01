@@ -1,0 +1,187 @@
+// Global variable overrides. Must be declared before importing Valo.
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+//$v-font-size: 16px;
+//$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+// Defines colors for indicating status (focus, success, failure)
+//$v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+//$v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+@import "../valo/valo";
+@import "common";
+@import "views/login";
+// Optimize the CSS output
+$v-included-components: remove($v-included-components, accordion);
+$v-included-components: remove($v-included-components, colorpicker);
+$v-included-components: remove($v-included-components, popupview);
+$v-included-components: remove($v-included-components, progressbar);
+$v-included-components: remove($v-included-components, splitpanel);
+$v-included-components: remove($v-included-components, slider);
+$v-included-components: remove($v-included-components, table);
+$v-included-components: remove($v-included-components, tree);
+$v-included-components: remove($v-included-components, treetable);
+$v-included-components: remove($v-included-components, twincolselect);
+// Main layout padding
+$view-padding: round($v-unit-size / 1.5) !default;
+// Slight adjustment to menu background-color
+$valo-menu-background-color: #414B56;
+@mixin mytheme {
+    @include valo;
+    @include mytheme-common;
+    @include mytheme-login-view;
+    // Insert your own theme rules here
+    // Menu bar
+    .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part {
+        max-width: 145px!important;
+    }
+    .menu-title {
+        color: white;
+        padding: 18.5px 9.25px;
+        font-size: 17.6px;
+        width: 100%;
+        text-align: center;
+    }
+    .valo-menu-part .v-caption {
+        color: white;
+        padding: 15px 10px 0px;
+    }
+    .valo-menuitems {
+        display: grid;
+    }
+    .valo-menu .v-caption {
+        margin-top: 10px;
+    }
+    // Dashboard
+    .layout-with-border {
+        border: 4px solid #ffffff;
+        padding: 8px;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0px 0px 0px 1px #d5d5d5;
+        -moz-box-shadow: inset 0px 0px 0px 10px #d5d5d5;
+        box-shadow: inset 0px 0px 0px 1px #d5d5d5;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+    }
+    //Login
+    .loginview {
+        background-image: url(./img/login-bg.jpg);
+        background-size: cover;
+    }
+    // Calendar
+    .v-calendar-event {
+        color: black!important;
+    }
+    .v-calendar-event-blue .v-calendar-event-content {
+        background-color: rgba(124, 181, 236, 0.7)!important;
+    }
+    .v-calendar-event-grey .v-calendar-event-content {
+        background-color: rgba(67, 67, 72, 0.6)!important;
+    }
+    .v-calendar-event-green .v-calendar-event-content {
+        background-color: rgba(144, 237, 125, 0.7)!important;
+    }
+    // Other
+    .v-table-cell-wrapper {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden
+    }
+    .scrollable {
+        overflow-y: auto !important;
+    }
+    .v-slot {
+        margin: 5px;
+    }
+    .chartColorScheme .chart-bottom0-left0-line0 {
+        stroke: #197DE1;
+        fill: #197DE1;
+    }
+    .chartColorScheme .chart-bottom0-left0-line1 {
+        stroke: #2C9720;
+        fill: #2C9720;
+    }
+    .chart-data-rectangle {
+        stroke-width: 2;
+        stroke: rgb(0, 0, 0);
+        fill: rgb(255, 255, 255);
+        fill-opacity: 0.1;
+        stroke-opacity: 0.5;
+    }
+    line.tick {
+        stroke-width: 1;
+        stroke: rgb(0, 0, 0);
+    }
+    line.chart-mesh-line {
+        stroke: rgb(0, 0, 0);
+        stroke-width: 1;
+        stroke-opacity: 0.4;
+    }
+    .axis-title {
+        font-size: 13px;
+        font-weight: bold;
+        color: #141414;
+        fill: #141414;
+        stroke: none;
+    }
+    .general-chart-title-text {
+        font-size: 16px;
+        font-weight: bold;
+        color: #141414;
+        fill: #141414;
+        stroke: none;
+    }
+    .chart-whole-area {
+        text-align: left;
+        line-height: normal;
+        font-family: "Open Sans";
+        font-size: 12px;
+    }
+    .chart-mesh-item-left,
+    .chart-mesh-item-bottom,
+    .chart-mesh-item-top,
+    .chart-mesh-item-right {
+        font-size: 11px;
+        color: #CCCCCC;
+    }
+    .chart-data-white-mark {
+        fill: white;
+        stroke: white;
+    }
+    .chart-area-fill-opacity {
+        fill-opacity: 0.72;
+        stroke-width: 0;
+    }
+    .v-table-row.v-table-row-highlight-red,
+    .v-table-row-odd.v-table-row-highlight-red {
+        background-color: #f57272;
+    }
+    .v-table-header {
+        border-bottom: 1px solid black;
+        display: flex;
+        font-weight: bold
+    }
+    // Accounting view
+    .accounting-table .v-table-row,
+    .accounting-table .v-table-row-odd {
+        display: flex;
+    }
+    .v-table-row-accounting-total-row {
+        font-weight: bold;
+        border-top: 1px solid black!important;
+        margin-bottom: 50px;
+        //display: inherit;
+    }
+}

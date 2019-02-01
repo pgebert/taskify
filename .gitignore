@@ -1,0 +1,7 @@
+/target/
+.project
+.settings
+gym.mv.db
+.classpath
+src/main/webapp/VAADIN/widgetsets/
+backups/
