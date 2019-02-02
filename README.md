@@ -1,7 +1,8 @@
 # Taskify
 
 [![project in progress](https://img.shields.io/badge/state-in%20progress-blue.svg)]()
-![screenshot](https://user-images.githubusercontent.com/6838540/52152771-ebc48780-2677-11e9-855f-b62acda376ac.png)
+![screenshot](https://user-images.githubusercontent.com/6838540/52164866-a005f280-26f8-11e9-9945-b25d102a5b15.png)
+
 
 Taskify is a ToDo list demo application build with java and vaadin. The web application covers the following features:
 
