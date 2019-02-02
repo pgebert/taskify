@@ -119,16 +119,16 @@ public class TaskPresenter {
 
 	public static Date oldestTaskDate(List<Task> tasks) {
 		// don't change the order of the original List
-		ArrayList<Task> routesCopy = new ArrayList<>(tasks);
-		Collections.sort(routesCopy, boltedAtComparator());
-		return routesCopy.size() > 0 ? routesCopy.get(0).getDate() : new Date();
+		ArrayList<Task> tasksCopy = new ArrayList<>(tasks);
+		Collections.sort(tasksCopy, StartAtComparator());
+		return tasksCopy.size() > 0 ? tasksCopy.get(0).getStart() : new Date();
 	}
 
-	public static Comparator<Task> boltedAtComparator() {
+	public static Comparator<Task> StartAtComparator() {
 		return new Comparator<Task>() {
 			@Override
 			public int compare(Task o1, Task o2) {
-				return o1.getDate().compareTo(o2.getDate());
+				return o1.getStart().compareTo(o2.getStart());
 			}
 		};
 	}

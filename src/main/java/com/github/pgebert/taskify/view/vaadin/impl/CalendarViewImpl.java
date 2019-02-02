@@ -198,15 +198,11 @@ public class CalendarViewImpl extends HorizontalLayout implements CalendarView, 
 		container.removeAllItems();
 
 		for (Task item : items) {
-			Date startTime = Date.from(item.getDate().toInstant().truncatedTo(ChronoUnit.DAYS).plus(9, ChronoUnit.HOURS));
-			Date endTime = Date.from(startTime.toInstant().plus(item.getTime(), ChronoUnit.HOURS));
-
-			BasicEvent event = new BasicEvent(item.getOwner().getName(), item.toString(), startTime, endTime);						
+			BasicEvent event = new BasicEvent(item.getTitle(), item.getOwner().toString(), item.getStart(), item.getEnd());						
 			container.addBean(event);
 		}
 
 		container.sort(new Object[] { "start" }, new boolean[] { true });
-//
 		calendar.setContainerDataSource(container, "caption", "description", "start", "end", "styleName");
 		calendar.markAsDirty();
 

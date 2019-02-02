@@ -15,6 +15,7 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.DateField;
@@ -41,7 +42,7 @@ public class TaskDetailWindow extends Window {
 		initLayout();	
 		
 		User owner = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();		
-		Task task = new Task(-1L, "", owner, 1, new Date(), 0, TaskState.DONE);
+		Task task = new Task(-1L, "", owner, 1, new Date(), new Date(), TaskState.DONE);
 		BeanItem<Task> item = new BeanItem<Task>(task);
 		content.addComponent(new TaskForm(item, false, eventBus));
 	}
@@ -82,12 +83,12 @@ public class TaskDetailWindow extends Window {
 		@PropertyId("owner")
 		NativeSelect owner = new NativeSelect("Owner");
 
-		@PropertyId("date")
-		DateField date = new DateField("Date");
+		@PropertyId("start")
+		DateField start = new DateField("Planned start");
 		
-		@PropertyId("time")
-		TextField time = new TextField("time");
-		
+		@PropertyId("end")
+		DateField end = new DateField("Planned end");
+				
 		@PropertyId("priority")
 		NativeSelect priority = new NativeSelect("Priority");
 		
@@ -112,12 +113,15 @@ public class TaskDetailWindow extends Window {
 			owner.addItem(user);
 			owner.setItemCaption(user, user.getName());
 			owner.setNullSelectionAllowed(false);
+			
+			start.setResolution(Resolution.MINUTE);
+			end.setResolution(Resolution.MINUTE);
 
 			FormLayout layout = new FormLayout();
 			layout.addComponent(title);
 			layout.addComponent(owner);
-			layout.addComponent(date);
-			layout.addComponent(time);
+			layout.addComponent(start);
+			layout.addComponent(end);
 			layout.addComponent(priority);
 			layout.addComponent(state);
 

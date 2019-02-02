@@ -26,11 +26,11 @@ public class Task {
 	@TableColumn(value = "Priority", order = 6)
 	private int priority;
 
-	@TableColumn(value = "Date", order = 4)
-	private Date date;
+	@TableColumn(value = "Planned start", order = 4)
+	private Date start;
 	
-	@TableColumn(value = "Time", order = 5)
-	private int time;
+	@TableColumn(value = "Planned end", order = 5)
+	private Date end;	
 
 	@TableColumn(value = "State", order = 1)
 	private TaskState state;
@@ -41,7 +41,7 @@ public class Task {
 	 */
 	@Override
 	public String toString() {
-		return "Route - " + this.title;
+		return "Task - " + this.title;
 	}
 
 }

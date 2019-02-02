@@ -2,12 +2,16 @@ package com.github.pgebert.taskify.presenter;
 
 import static com.github.pgebert.taskify.presenter.MainPresenter.onView;
 
+import com.github.pgebert.taskify.BaseUI;
 import com.github.pgebert.taskify.datasource.TaskDataFacade;
+import com.github.pgebert.taskify.datasource.User;
+import com.github.pgebert.taskify.events.ViewEvents.EnterViewEvent;
 import com.github.pgebert.taskify.view.api.CalendarView;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.UI;
 
 
 /**
@@ -40,9 +44,10 @@ public class CalendarPresenter {
 	 * @param event
 	 */
 	@Subscribe
-	public void enter(ViewChangeEvent event) {
-		if (onView(this.calendarView)) {			
-			this.calendarView.showItems(taskData.read());
+	public void enter(EnterViewEvent event) {
+		if (onView(this.calendarView)) {
+			User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
+			this.calendarView.showItems(taskData.read(user));
 		}
 	}
 }

@@ -34,8 +34,8 @@ public class TaskDataDummy implements TaskDataFacade {
 			builder.title("Task " + i);
 			builder.owner(owners.get(i % owners.size()));
 			builder.priority((i % 5)+1);
-			builder.date(Date.from(ZonedDateTime.now().minusDays((i+1)*(int)((Math.random() * 10)+1)).toInstant()));
-			builder.time(((i%3)+1));
+			builder.start(Date.from(ZonedDateTime.now().minusDays((i+1)*(int)((Math.random() * 10)+1)).toInstant()));
+			builder.end(Date.from(ZonedDateTime.now().plusHours(1).minusDays((i+1)*(int)((Math.random() * 10)+1)).toInstant()));
 			builder.state(TaskState.values()[ (int)(Math.random() * TaskState.values().length)]);
 			
 			tasks.put((long) i, builder.build());
@@ -100,8 +100,8 @@ public class TaskDataDummy implements TaskDataFacade {
 		
 		for (Task task : this.tasks.values()) {
 			if (task.getOwner().equals(owner)
-					&& task.getDate().compareTo(beginDate) >= 0
-					&& task.getDate().compareTo(endDate) <= 0) {
+					&& task.getStart().compareTo(beginDate) >= 0
+					&& task.getEnd().compareTo(endDate) <= 0) {
 				matches.add(task);
 			}
 		}		

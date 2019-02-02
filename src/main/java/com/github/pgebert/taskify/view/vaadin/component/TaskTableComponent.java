@@ -31,7 +31,8 @@ public class TaskTableComponent extends TableComponent<Task> {
 		super(Task.class, eventBus);
 		
 		table.addGeneratedColumn("state", (source, itemId, columnId) -> StateToIconGenerator(source, itemId, columnId));
-		table.setConverter("date", new StringToMediumDateFormatConverter());
+		table.setConverter("start", new StringToMediumDateFormatConverter());
+		table.setConverter("end", new StringToMediumDateFormatConverter());
 	}
 	
 	public void setColumnHeaders(String... columnHeaders) {
@@ -98,9 +99,10 @@ public class TaskTableComponent extends TableComponent<Task> {
 		@Override
 		public String getStyle(Table source, Object itemId, Object propertyId) {
 			Item item = source.getItem(itemId);
-			Date date = (Date) item.getItemProperty("date").getValue();
+			Date date = (Date) item.getItemProperty("start").getValue();
+			TaskState state = (TaskState) item.getItemProperty("state").getValue();
 
-			if (oldestTaskDate != null && isSameDayMonthYear(date, oldestTaskDate)) {
+			if (oldestTaskDate != null && isSameDayMonthYear(date, oldestTaskDate) && state.equals(TaskState.OPEN)) {
 				return "highlight-red";
 			} 
 			return null;
