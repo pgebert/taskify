@@ -89,7 +89,7 @@ public class TaskDetailWindow extends Window {
 		TextField time = new TextField("time");
 		
 		@PropertyId("priority")
-		TextField priority = new TextField("Priority");
+		NativeSelect priority = new NativeSelect("Priority");
 		
 		@PropertyId("state")
 		NativeSelect state = new NativeSelect("Status");
@@ -101,6 +101,12 @@ public class TaskDetailWindow extends Window {
 				state.setItemCaption(s, s.getTaskState());
 			}
 			state.setNullSelectionAllowed(false);
+			
+			for (int i = 0; i < 5; i++) {
+				priority.addItem(i+1);
+				priority.setItemCaption(i+1, "Priotity " + (i+1));
+			}
+			priority.setNullSelectionAllowed(false);
 			
 			User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
 			owner.addItem(user);

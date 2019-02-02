@@ -65,13 +65,13 @@ public class DashboardPresenter {
 	@Subscribe
 	public void enter(EnterViewEvent event) {
 		if (onView(this.dashboardView)) {
-			String optionsBarChart = "var options = { chart: { type: 'column' }, title: { text: 'Personal Monthly Average' }, xAxis: { categories: " + Arrays.toString(getMonthLabels()) + ", crosshair: true }, yAxis: { min: 0, title: { text: 'Realized Tasks' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y}</b></td></tr>', footerFormat: '</table>', shared: true, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Tasks', data: " + Arrays.toString(getBarChartDataTasks()) + "}]};";
+			String optionsBarChart = "var options = { chart: { type: 'bar' }, title: { text: 'Task priorities' }, xAxis: { text: 'Open Tasks' , categories: " + Arrays.toString(getPriorityLabels()) + "}, yAxis: { title: {  }, allowDecimals:false }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y}</b></td></tr>', footerFormat: '</table>', shared: true, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Open tasks', data: " + Arrays.toString(getBarChartData()) + "}]};";
 			this.dashboardView.updateBarChart(optionsBarChart);
 			
-//			String optionsHistogramChart = "var options = { chart: { type: 'column' }, title: { text: 'Routes per Grade' }, xAxis: { categories: " + Arrays.toString(getRouteHistogramLabels()) + ", crosshair: true }, yAxis: { min: 0, title: { text: 'Number of Routes' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y}</b></td></tr>', footerFormat: '</table>', shared: true, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Routes', data: " + Arrays.toString(getRouteHistogramData()) + "}]};";
-//			this.dashboardView.updateHistogramChart(optionsHistogramChart);
+			String optionsSplineChart = "var options = { chart: { type: 'spline' }, title: { text: 'Personal Monthly Average' }, xAxis: { categories: " + Arrays.toString(getMonthLabels()) + ", crosshair: true }, yAxis: { min: 0, title: { text: 'Realized Tasks' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y}</b></td></tr>', footerFormat: '</table>', shared: true, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Tasks', data: " + Arrays.toString(getColumnChartData()) + "}]};";
+			this.dashboardView.updateSplineChart(optionsSplineChart);
 			
-			String optionsDonutChart = "var options = { chart: { type: 'pie' }, title: { text: 'Route setting goal 2019' }, yAxis: { title: { text: 'Number of setted routes' } }, plotOptions: { pie: { shadow: false } }, tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' routes'; } }, series: [{ name: 'Browsers', data: [['ToDo', " + getTasksOpen() + "],['Done', " + getTasksDone() + "]], size: '60%', innerSize: '20%', showInLegend:true, dataLabels: { enabled: false } }] }";
+			String optionsDonutChart = "var options = { chart: { type: 'pie' }, title: { text: 'Task progress' }, yAxis: { title: { text: 'Number of setted routes' } }, plotOptions: { pie: { shadow: false } }, tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' routes'; } }, series: [{ name: 'Browsers', data: [['ToDo', " + getTasksOpen() + "],['Done', " + getTasksDone() + "]], size: '60%', innerSize: '20%', showInLegend:true, dataLabels: { enabled: false } }] }";
 			this.dashboardView.updateDonutChart(optionsDonutChart);
 		}	
 	}
@@ -80,7 +80,7 @@ public class DashboardPresenter {
 	 * Gets the number of tasks done per month by this owner for the last 12 months.
 	 * @return array sorted backwards from the current month with the number of done tasks by this user
 	 */
-	private int[] getBarChartDataTasks() {		
+	private int[] getColumnChartData() {		
 		
 		int[] results = new int[12];
 		
@@ -90,7 +90,7 @@ public class DashboardPresenter {
 		for (int i = 0; i < 12; i++) {			
 			Date beginDate = Date.from(ZonedDateTime.now().minusMonths(i).with(TemporalAdjusters.firstDayOfMonth()).toInstant());
 			Date endDate = Date.from(ZonedDateTime.now().minusMonths(i).with(TemporalAdjusters.lastDayOfMonth()).toInstant());
-			results[i] = taskData.read(user, beginDate, endDate).size();			
+			results[i] = taskData.read(user, beginDate, endDate).stream().filter(t -> t.getState().equals(TaskState.DONE)).collect(Collectors.toList()).size();			
 		}		
 		ArrayUtils.reverse(results);		
 		return results;		
@@ -111,32 +111,30 @@ public class DashboardPresenter {
 		return rotated;
 	}
 	
-//	/**
-//	 * Generates a histogram of current routes per grade.
-//	 * @return array with the number of current routes for each grade
-//	 */
-//	private int[] getRouteHistogramData() {
-//		int[] histogram = new int[RouteGrade.values().length];
-//		List<RouteGrade> grades = Arrays.asList(RouteGrade.values());
-//		List<Task> currentRoutes = taskData.read().stream()
-//			    .filter( r -> r.getState().equals(TaskState.REALIZED))
-//			    .collect(Collectors.toList());
-//		
-//		for (Task task : currentRoutes) {
-//			histogram[grades.indexOf(task.getGrade())] += 1; 
-//		}
-//		
-//		return histogram;
-//	}
-//	
-//	/**
-//	 * Generates the labels for each grade
-//	 * @return array containing the string representation of each grade
-//	 */
-//	private String[] getRouteHistogramLabels() {
-//		return Arrays.asList(RouteGrade.values()).stream().map(s -> "\"" + s.getValue() + "\"").toArray(String[]::new);
-//	}
+	/**
+	 * Gets the number of tasks open per priority
+	 * @return number of tasks open per priority
+	 */
+	private int[] getBarChartData() {		
+		
+		int[] results = new int[5];
+		
+		User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
+		List<Task> tasks = taskData.read(user).stream().filter(t -> t.getState().equals(TaskState.OPEN)).collect(Collectors.toList());
+		
+		for (Task t : tasks) {			
+			results[t.getPriority()-1]++;			
+		}		
+		return results;		
+	}
 	
+	/**
+	 * Generates the corresponding priority labels
+	 * @return array of priority labels
+	 */
+	private String[] getPriorityLabels() {
+		return new  String[] { "'Priority 1'", "'Priority 2'", "'Priority 3'", "'Priority 4'", "'Priority 5'"};	
+	}
 	
 	/**
 	 * Generates the number of open tasks for current user
