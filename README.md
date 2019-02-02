@@ -1,6 +1,11 @@
 # Taskify
 
 [![project in progress](https://img.shields.io/badge/state-in%20progress-blue.svg)]()
+
+## Live demo
+See the application live on [Heroku](https://taskify-demo.herokuapp.com/) - login as "Noah Smith" with "password".
+
+## About
 ![screenshot](https://user-images.githubusercontent.com/6838540/52164866-a005f280-26f8-11e9-9945-b25d102a5b15.png)
 
 
