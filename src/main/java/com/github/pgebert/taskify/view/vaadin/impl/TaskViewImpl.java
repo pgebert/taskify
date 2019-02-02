@@ -33,6 +33,7 @@ public class TaskViewImpl extends HorizontalLayout implements TaskView,
 	private static final long serialVersionUID = 2358815687796478368L;
 	
 	private TaskTableComponent taskTableComponent;
+	CheckBox currentBtn;
 	private EventBus eventBus;
 
 	@Inject
@@ -87,7 +88,8 @@ public class TaskViewImpl extends HorizontalLayout implements TaskView,
         header.addComponent(title);
         header.setComponentAlignment(title, Alignment.TOP_LEFT);
         
-        CheckBox currentBtn = new CheckBox("Current", true);
+        this.currentBtn = new CheckBox("Hide Done", false);
+        currentBtn.setValue(false);
         currentBtn.setImmediate(true);
         currentBtn.addValueChangeListener(event -> eventBus.post(new CurrentFilterChangeEvent(currentBtn.getValue())));        
                          
@@ -138,6 +140,11 @@ public class TaskViewImpl extends HorizontalLayout implements TaskView,
 	@Override
 	public void enter(ViewChangeEvent event) {
 		this.eventBus.post(new EnterViewEvent());		
+	}
+
+	@Override
+	public void resetFilter() {
+		currentBtn.setValue(false);		
 	}
 
 }

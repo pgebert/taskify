@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.github.pgebert.taskify.datasource.Task.TaskBuilder;
 import com.google.inject.Inject;
@@ -35,7 +36,7 @@ public class TaskDataDummy implements TaskDataFacade {
 			builder.priority((i % 5)+1);
 			builder.date(Date.from(ZonedDateTime.now().minusDays((i+1)*(int)((Math.random() * 10)+1)).toInstant()));
 			builder.time(((i%3)+1));
-			builder.state(TaskState.values()[i%TaskState.values().length]);
+			builder.state(TaskState.values()[ (int)(Math.random() * TaskState.values().length)]);
 			
 			tasks.put((long) i, builder.build());
 		}
@@ -45,6 +46,11 @@ public class TaskDataDummy implements TaskDataFacade {
 	public List<Task> read() {
 		return new ArrayList<Task>(tasks.values());
 	}
+	
+	@Override
+	public List<Task> read(User owner) {
+		return tasks.values().stream().filter(t -> t.getOwner().equals(owner)).collect(Collectors.toList());
+	}
 
 	@Override
 	public Task create(Task task) {
@@ -53,7 +59,7 @@ public class TaskDataDummy implements TaskDataFacade {
 		tasks.put(task.getId(), task);
 		return task;
 	}
-
+	
 	@Override
 	public Task update(Task task) {
 		
@@ -101,6 +107,5 @@ public class TaskDataDummy implements TaskDataFacade {
 		}		
 		return matches;
 	}
-
 	
 }

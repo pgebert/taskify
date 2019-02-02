@@ -20,5 +20,7 @@ public interface TaskView {
 	void showNewWindow();
 
 	void setOldestRouteDate(Date oldestRouteDate);
+	
+	void resetFilter();
 
 }

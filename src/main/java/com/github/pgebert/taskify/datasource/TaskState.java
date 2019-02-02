@@ -4,7 +4,7 @@ import com.vaadin.server.FontAwesome;
 
 public enum TaskState {
 	
-	PLANNED("Planned", FontAwesome.SQUARE_O), REALIZED("Done", FontAwesome.CHECK_SQUARE_O), OUTDATED("Archived", FontAwesome.CLOCK_O);
+	OPEN("Open", FontAwesome.SQUARE_O), DONE("Done", FontAwesome.CHECK_SQUARE_O);
 	
 	private String state;
 	private FontAwesome icon;

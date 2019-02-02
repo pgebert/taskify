@@ -10,9 +10,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.github.pgebert.taskify.BaseUI;
 import com.github.pgebert.taskify.datasource.Task;
 import com.github.pgebert.taskify.datasource.TaskDataFacade;
 import com.github.pgebert.taskify.datasource.TaskState;
+import com.github.pgebert.taskify.datasource.User;
 import com.github.pgebert.taskify.events.TaskEvents.TaskClickedEvent;
 import com.github.pgebert.taskify.events.TaskEvents.TaskRemovedEvent;
 import com.github.pgebert.taskify.events.TaskEvents.TaskSavedEvent;
@@ -24,6 +26,7 @@ import com.google.common.base.Predicate;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.vaadin.ui.UI;
 
 /**
  * Presenter class for to handle task view
@@ -35,11 +38,12 @@ public class TaskPresenter {
 
 	private TaskDataFacade taskData;
 	private TaskView taskView;
-
 	private EventBus eventBus;
+	
+	private boolean filterState;
 
 	/*
-	 * Constructor for user view presenter to control the user data
+	 * Constructor for task view presenter to control the task data
 	 */
 	@Inject
 	public TaskPresenter(EventBus eventBus, TaskDataFacade taskData, TaskView taskView) {
@@ -49,6 +53,8 @@ public class TaskPresenter {
 
 		this.eventBus = eventBus;
 		this.eventBus.register(this);	
+		
+		resetFilterState();
 	}
 	
 	/**
@@ -59,9 +65,9 @@ public class TaskPresenter {
 	@Subscribe
 	public void enter(EnterViewEvent event) {
 		if (onView(this.taskView)) {
-			List<Task> currentTasks = getCurrentTasks();
-			this.taskView.setOldestRouteDate(oldestTaskDate(currentTasks));
-			this.taskView.showItems(currentTasks);
+			this.taskView.setOldestRouteDate(oldestTaskDate(getTasks()));
+			this.taskView.showItems(getTasks());
+			resetFilterState();
 		}
 	}
 
@@ -85,7 +91,7 @@ public class TaskPresenter {
 	@Subscribe
 	public void subscribeTaskSaved(TaskSavedEvent event) {
 		this.taskData.update(event.getTask());
-		this.taskView.showItems(getCurrentTasks());
+		this.taskView.showItems(getTasks());
 	}
 
 	/**
@@ -96,7 +102,7 @@ public class TaskPresenter {
 	@Subscribe
 	public void subscribeRouteRemoved(TaskRemovedEvent event) {
 		this.taskData.delete(event.getTask());
-		this.taskView.showItems(getCurrentTasks());
+		this.taskView.showItems(getTasks());
 	}
 
 	/**
@@ -134,35 +140,45 @@ public class TaskPresenter {
 	 */
 	@Subscribe
 	public void subscribeCurrentFilterChangeEvent(CurrentFilterChangeEvent event) {		
-		if (onView(this.taskView)) {
-			if (event.isCurrentFilter()) {				
-				this.taskView.showItems(getCurrentTasks());
-			} else {
-				this.taskView.showItems(taskData.read());
-			}
+		if (onView(this.taskView)) {	
+			this.filterState = event.isCurrentFilter();
+			this.taskView.showItems(getTasks());
 		}
 	}
-
+	
 	/**
-	 * Get all currently bolted routes from database which are not planned or
-	 * removed
-	 * 
-	 * @return currently bolted routes from database
+	 * Get all tasks for the current user depending on the filter state 
+	 * @return filtered tasks of the current user
 	 */
-	public List<Task> getCurrentTasks() {
-		return newArrayList(filter(this.taskData.read(), isBolted()));
+	public List<Task> getTasks() {
+		User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
+		List<Task> tasks= new ArrayList<Task>();
+		if (this.filterState) {				
+			tasks = newArrayList(filter(this.taskData.read(user), isOpen()));
+		} else {
+			tasks = this.taskData.read(user);
+		}		
+		return tasks;
+	}
+	
+	/**
+	 * Resets the view filter
+	 */
+	private void resetFilterState() {
+		this.filterState = false;
+		this.taskView.resetFilter();
 	}
 
 	/**
-	 * Filter method for currently bolted routes which are not removed or planned.
+	 * Filter method for open tasks
 	 * 
-	 * @return whether the route is currently bolted
+	 * @return whether the task is open or done
 	 */
-	public static Predicate<Task> isBolted() {
+	public static Predicate<Task> isOpen() {
 		return new Predicate<Task>() {
 			@Override
 			public boolean apply(Task task) {
-				return task.getState().equals(TaskState.REALIZED);
+				return task.getState().equals(TaskState.OPEN);
 			}
 		};
 	}

@@ -7,12 +7,10 @@ import com.github.pgebert.taskify.BaseUI;
 import com.github.pgebert.taskify.datasource.Task;
 import com.github.pgebert.taskify.datasource.TaskState;
 import com.github.pgebert.taskify.datasource.User;
-import com.github.pgebert.taskify.datasource.UserDataFacade;
 import com.github.pgebert.taskify.events.TaskEvents.TaskRemovedEvent;
 import com.github.pgebert.taskify.events.TaskEvents.TaskSavedEvent;
 import com.github.pgebert.taskify.view.vaadin.helper.AccessControl;
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Injector;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.fieldgroup.PropertyId;
@@ -42,10 +40,8 @@ public class TaskDetailWindow extends Window {
 		super("Add new task");
 		initLayout();	
 		
-		AccessControl control = ((BaseUI) UI.getCurrent()).getAccessControl();
-		User owner = control.getUser();
-		
-		Task task = new Task(-1L, "", owner, 1, new Date(), 0, TaskState.REALIZED);
+		User owner = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();		
+		Task task = new Task(-1L, "", owner, 1, new Date(), 0, TaskState.DONE);
 		BeanItem<Task> item = new BeanItem<Task>(task);
 		content.addComponent(new TaskForm(item, false, eventBus));
 	}
@@ -99,21 +95,16 @@ public class TaskDetailWindow extends Window {
 		NativeSelect state = new NativeSelect("Status");
 
 		public TaskForm(final BeanItem<Task> item, boolean updateMode, final EventBus eventBus) {
-			
-			// TODO: No direct data base requests from the view (MVC pattern)
-			final Injector injector = ((BaseUI) UI.getCurrent()).getInjector();
-			UserDataFacade userData = injector.getInstance(UserDataFacade.class);
-						
+									
 			for (TaskState s : TaskState.values()) {
 				state.addItem(s);
 				state.setItemCaption(s, s.getTaskState());
 			}
 			state.setNullSelectionAllowed(false);
 			
-			for (User u : userData.read()) {
-				owner.addItem(u);
-				owner.setItemCaption(u, u.getName());
-			}
+			User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
+			owner.addItem(user);
+			owner.setItemCaption(user, user.getName());
 			owner.setNullSelectionAllowed(false);
 
 			FormLayout layout = new FormLayout();

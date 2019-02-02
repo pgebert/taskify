@@ -25,6 +25,13 @@ public interface TaskDataFacade {
 	List<Task> read();
 	
 	/**
+	 * Read all items from data for given owner
+	 * @param owner task owner
+	 * @return all items from data
+	 */
+	List<Task> read(User owner);
+	
+	/**
 	 * Returns all items of the given route setter bolted between the two given dates
 	 * @param owner  the task owner
 	 * @param beginDate earliest date of the item

@@ -71,7 +71,7 @@ public class DashboardPresenter {
 //			String optionsHistogramChart = "var options = { chart: { type: 'column' }, title: { text: 'Routes per Grade' }, xAxis: { categories: " + Arrays.toString(getRouteHistogramLabels()) + ", crosshair: true }, yAxis: { min: 0, title: { text: 'Number of Routes' } }, tooltip: { headerFormat: '<span style=\"font-size:10px\">{point.key}</span><table>', pointFormat: '<tr><td style=\"color:{series.color};padding:0\">{series.name}: </td>' + '<td style=\"padding:0\"><b>{point.y}</b></td></tr>', footerFormat: '</table>', shared: true, useHTML: true }, plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } }, series: [{ name: 'Routes', data: " + Arrays.toString(getRouteHistogramData()) + "}]};";
 //			this.dashboardView.updateHistogramChart(optionsHistogramChart);
 			
-			String optionsDonutChart = "var options = { chart: { type: 'pie' }, title: { text: 'Route setting goal 2019' }, yAxis: { title: { text: 'Number of setted routes' } }, plotOptions: { pie: { shadow: false } }, tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' routes'; } }, series: [{ name: 'Browsers', data: [['ToDo', " + getTasksOpenThisYear() + "],['Done', " + getTasksDoneThisYear() + "]], size: '60%', innerSize: '20%', showInLegend:true, dataLabels: { enabled: false } }] }";
+			String optionsDonutChart = "var options = { chart: { type: 'pie' }, title: { text: 'Route setting goal 2019' }, yAxis: { title: { text: 'Number of setted routes' } }, plotOptions: { pie: { shadow: false } }, tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' routes'; } }, series: [{ name: 'Browsers', data: [['ToDo', " + getTasksOpen() + "],['Done', " + getTasksDone() + "]], size: '60%', innerSize: '20%', showInLegend:true, dataLabels: { enabled: false } }] }";
 			this.dashboardView.updateDonutChart(optionsDonutChart);
 		}	
 	}
@@ -139,36 +139,24 @@ public class DashboardPresenter {
 	
 	
 	/**
-	 * Generates the number of open tasks in the current year for current user
-	 * @return number of open tasks in the current year
+	 * Generates the number of open tasks for current user
+	 * @return number of open tasks
 	 */
-	private int getTasksOpenThisYear() {
-		
-			
-		Date beginDate = Date.from(ZonedDateTime.now().with(TemporalAdjusters.firstDayOfYear()).toInstant());
-		Date endDate = Date.from(ZonedDateTime.now().with(TemporalAdjusters.lastDayOfYear()).toInstant());
-		AccessControl control = ((BaseUI) UI.getCurrent()).getAccessControl();
-		User user = control.getUser();		
-		List<Task> tasks = taskData.read(user, beginDate, endDate);		
-		List<Task> open = tasks.stream().filter(t -> t.getState().equals(TaskState.PLANNED)).collect(Collectors.toList());
-		
+	private int getTasksOpen() {			
+		User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();	
+		List<Task> tasks = taskData.read(user);		
+		List<Task> open = tasks.stream().filter(t -> t.getState().equals(TaskState.OPEN)).collect(Collectors.toList());		
 		return open.size();
 	}
 	
 	/**
-	 * Generates the number of done tasks in the current year for current user
-	 * @return number of done tasks in the current year
+	 * Generates the number of done tasks for current user
+	 * @return number of done tasks
 	 */
-	private int getTasksDoneThisYear() {
-		
-			
-		Date beginDate = Date.from(ZonedDateTime.now().with(TemporalAdjusters.firstDayOfYear()).toInstant());
-		Date endDate = Date.from(ZonedDateTime.now().with(TemporalAdjusters.lastDayOfYear()).toInstant());
-		AccessControl control = ((BaseUI) UI.getCurrent()).getAccessControl();
-		User user = control.getUser();		
-		List<Task> tasks = taskData.read(user, beginDate, endDate);		
-		List<Task> done = tasks.stream().filter(t -> t.getState().equals(TaskState.REALIZED)).collect(Collectors.toList());
-		
+	private int getTasksDone() {		
+		User user = ((BaseUI) UI.getCurrent()).getAccessControl().getUser();
+		List<Task> tasks = taskData.read(user);		
+		List<Task> done = tasks.stream().filter(t -> t.getState().equals(TaskState.DONE)).collect(Collectors.toList());		
 		return done.size();
 	}
 
